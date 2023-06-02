@@ -29,6 +29,7 @@ export default component$(() => {
           id={pokemondId.value}
           backIimage={showBackImage.value}
           isVisible={isVisibleImage.value}
+          
         />
       </div>
 
