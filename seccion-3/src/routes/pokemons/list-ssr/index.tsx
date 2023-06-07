@@ -1,14 +1,15 @@
 import { component$, useTask$ } from "@builder.io/qwik";
 import { DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
+import { BasicPokemonInfo, PokemonListReponse } from "~/interfaces";
 
-export const usePokemonList = routeLoader$(async () => {
+export const usePokemonList = routeLoader$<BasicPokemonInfo[]>(async () => {
   const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?limit=10&offset=10`
+    `https://pokeapi.co/api/v2/pokemon?limit=10&offset=20`
   );
 
-  const data = await response.json();
+  const data = (await response.json()) as PokemonListReponse;
 
-  return data;
+  return data.results;
 });
 
 export default component$(() => {
@@ -28,17 +29,12 @@ export default component$(() => {
       </div>
 
       <div class="grid grid-cols-6  gap-4 mt-5">
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
-        <div class="m-5 flex flex-col justify-center items-center">Pokemon</div>
+        {response.value.map(({ name, url }) => (
+          <div key={name} class="m-5 flex flex-col justify-center items-center">
+            <span class="capitalize">{name}</span>
+          </div>
+        ))}
       </div>
-
-      <div>{JSON.stringify(response)}</div>
     </>
   );
 });
