@@ -9,5 +9,6 @@ export interface PokemonListReponse {
 
 export interface BasicPokemonInfo {
   name: string;
+  id: string;
   url: string;
 }

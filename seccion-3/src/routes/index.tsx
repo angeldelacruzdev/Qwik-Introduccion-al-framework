@@ -1,10 +1,11 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
-import { DocumentHead, Link, useNavigate } from "@builder.io/qwik-city";
+import type { DocumentHead} from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
 
 export default component$(() => {
   const pokemondId = useSignal(1);
-  const showBackImage = useSignal(false);
+  const showBackImage = useSignal(true);
   const isVisibleImage = useSignal(true);
   const navigate = useNavigate();
 
@@ -29,7 +30,6 @@ export default component$(() => {
           id={pokemondId.value}
           backIimage={showBackImage.value}
           isVisible={isVisibleImage.value}
-          
         />
       </div>
 

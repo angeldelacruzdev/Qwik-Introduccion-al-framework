@@ -1,4 +1,10 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+/* eslint-disable qwik/jsx-img */
+import {
+  component$,
+  useComputed$,
+  useSignal,
+  useTask$,
+} from "@builder.io/qwik";
 
 type Props = {
   id: number;
@@ -17,11 +23,11 @@ export const PokemonImage = component$(
       imageLoaded.value = false;
     });
 
-    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-
-    if (backIimage) {
-      imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`;
-    }
+    const imageUrl = useComputed$(() => {
+      return backIimage
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`;
+    });
 
     return (
       <div
@@ -30,7 +36,7 @@ export const PokemonImage = component$(
       >
         <span> {!imageLoaded.value && <span>Cargando..</span>}</span>
         <img
-          src={imageUrl}
+          src={imageUrl.value}
           alt=""
           onLoad$={() => {
             setTimeout(() => {

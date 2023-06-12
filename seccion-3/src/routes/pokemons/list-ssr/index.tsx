@@ -1,11 +1,9 @@
-import { component$, useComputed$, useTask$ } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  Link,
-  routeLoader$,
-  useLocation,
-} from "@builder.io/qwik-city";
-import { BasicPokemonInfo, PokemonListReponse } from "~/interfaces";
+import { component$, useComputed$ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
+import { Link, routeLoader$, useLocation } from "@builder.io/qwik-city";
+import { PokemonImage } from "~/components/pokemons/pokemon-image";
+import { getSmallPokemons } from "~/helpers/get-pokemons";
+import type { BasicPokemonInfo } from "~/interfaces";
 
 export const usePokemonList = routeLoader$<BasicPokemonInfo[]>(
   async ({ query, redirect, pathname }) => {
@@ -13,13 +11,7 @@ export const usePokemonList = routeLoader$<BasicPokemonInfo[]>(
 
     if (currentValue < 0) redirect(301, pathname);
 
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${currentValue}`
-    );
-
-    const data = (await response.json()) as PokemonListReponse;
-
-    return data.results;
+    return await getSmallPokemons(currentValue);
   }
 );
 
@@ -63,8 +55,9 @@ export default component$(() => {
       </div>
 
       <div class="grid grid-cols-6  gap-4 mt-5">
-        {response.value.map(({ name, url }) => (
+        {response.value.map(({ name, id }) => (
           <div key={name} class="m-5 flex flex-col justify-center items-center">
+            <PokemonImage id={+id} backIimage={false} isVisible/>
             <span class="capitalize">{name}</span>
           </div>
         ))}
