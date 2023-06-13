@@ -40,6 +40,15 @@ export default component$(() => {
     "scroll",
     $((event) => {
       console.log(event);
+      const maxScroll = document.body.scrollHeight;
+
+      const currentScroll = window.scrollY + window.innerHeight;
+
+      console.log(currentScroll, maxScroll);
+
+      if (currentScroll + 200 >= maxScroll) {
+        pokemonState.currentPage++;
+      }
     })
   );
 
