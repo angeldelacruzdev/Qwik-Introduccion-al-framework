@@ -13,12 +13,14 @@ import type { BasicPokemonInfo } from "~/interfaces";
 
 interface PokemonState {
   currentPage: number;
+  isLoading: boolean;
   pokemons: BasicPokemonInfo[];
 }
 
 export default component$(() => {
   const pokemonState = useStore<PokemonState>({
     currentPage: 0,
+    isLoading: false,
     pokemons: [],
   });
 
@@ -32,8 +34,12 @@ export default component$(() => {
   useTask$(async ({ track }) => {
     track(() => pokemonState.currentPage);
 
+    pokemonState.isLoading = true;
+
     const pokemons = await getSmallPokemons(pokemonState.currentPage * 10, 30);
     pokemonState.pokemons = [...pokemonState.pokemons, ...pokemons];
+
+    pokemonState.isLoading = false;
   });
 
   useOnDocument(
@@ -46,7 +52,7 @@ export default component$(() => {
 
       console.log(currentScroll, maxScroll);
 
-      if (currentScroll + 200 >= maxScroll) {
+      if (currentScroll + 200 >= maxScroll && !pokemonState.isLoading) {
         pokemonState.currentPage++;
       }
     })
