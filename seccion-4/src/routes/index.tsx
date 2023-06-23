@@ -1,35 +1,35 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
-import type { DocumentHead} from "@builder.io/qwik-city";
+import { component$, useSignal, $, useContext } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import { useNavigate } from "@builder.io/qwik-city";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
+import { PokemonGameContext } from "~/context";
 
 export default component$(() => {
-  const pokemondId = useSignal(1);
-  const showBackImage = useSignal(true);
-  const isVisibleImage = useSignal(true);
+  const usePokemon = useContext(PokemonGameContext);
+
   const navigate = useNavigate();
 
   const changePokeminId = $((value: number) => {
-    if (pokemondId.value + value <= 0) return;
+    if (usePokemon.pokemondId + value <= 0) return;
 
-    pokemondId.value += value;
+    usePokemon.pokemondId += value;
   });
 
   return (
     <>
       <span class="text-2xl">Buscador simple</span>
-      <span class="text-9xl">{pokemondId}</span>
+      <span class="text-9xl">{usePokemon.pokemondId}</span>
 
       <div
         class="cursor-pointer"
         onClick$={async () =>
-          await navigate(`/pokemons/pokemon/${pokemondId.value}/`)
+          await navigate(`/pokemons/pokemon/${usePokemon.pokemondId}/`)
         }
       >
         <PokemonImage
-          id={pokemondId.value}
-          backIimage={showBackImage.value}
-          isVisible={isVisibleImage.value}
+          id={usePokemon.pokemondId}
+          backIimage={usePokemon.showBackImage}
+          isVisible={usePokemon.isVisibleImage}
         />
       </div>
 
@@ -41,13 +41,17 @@ export default component$(() => {
           Siguiente
         </button>
         <button
-          onClick$={() => (showBackImage.value = !showBackImage.value)}
+          onClick$={() =>
+            (usePokemon.showBackImage = !usePokemon.showBackImage)
+          }
           class="btn btn-primary"
         >
           Voltear
         </button>
         <button
-          onClick$={() => (isVisibleImage.value = !isVisibleImage.value)}
+          onClick$={() =>
+            (usePokemon.isVisibleImage = !usePokemon.isVisibleImage)
+          }
           class="btn btn-primary"
         >
           Revelar
