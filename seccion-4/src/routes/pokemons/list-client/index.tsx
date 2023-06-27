@@ -1,28 +1,31 @@
 import {
   $,
   component$,
+  useContext,
   useOnDocument,
-  useStore,
   useTask$,
 } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { type DocumentHead } from "@builder.io/qwik-city";
 
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
+import { PokemonListContext } from "~/context";
 import { getSmallPokemons } from "~/helpers/get-pokemons";
 import type { BasicPokemonInfo } from "~/interfaces";
 
-interface PokemonState {
-  currentPage: number;
-  isLoading: boolean;
-  pokemons: BasicPokemonInfo[];
-}
+// interface PokemonState {
+//   currentPage: number;
+//   isLoading: boolean;
+//   pokemons: BasicPokemonInfo[];
+// }
 
 export default component$(() => {
-  const pokemonState = useStore<PokemonState>({
-    currentPage: 0,
-    isLoading: false,
-    pokemons: [],
-  });
+  const pokemonState = useContext(PokemonListContext);
+
+  // const pokemonState = useStore<PokemonState>({
+  //   currentPage: 0,
+  //   isLoading: false,
+  //   pokemons: [],
+  // });
 
   // useVisibleTask$(async ({ track }) => {
   //   track(() => pokemonState.currentPage);
@@ -37,7 +40,7 @@ export default component$(() => {
     pokemonState.isLoading = true;
 
     const pokemons = await getSmallPokemons(pokemonState.currentPage * 10, 30);
-    pokemonState.pokemons = [...pokemonState.pokemons, ...pokemons];
+    pokemonState.pokemon = [...pokemonState.pokemon, ...pokemons];
 
     pokemonState.isLoading = false;
   });
@@ -84,7 +87,7 @@ export default component$(() => {
       </div>
 
       <div class="grid grid-cols-6  gap-4 mt-5">
-        {pokemonState.pokemons.map(({ name, id }) => (
+        {pokemonState.pokemon.map(({ name, id }) => (
           <div key={name} class="m-5 flex flex-col justify-center items-center">
             <PokemonImage id={+id} backIimage isVisible />
             <span class="capitalize">{name}</span>

@@ -9,7 +9,8 @@ import {
 import Navbar from "~/components/shared/navbar/navbar";
 
 import styles from "./styles.css?inline";
-import { PokemonGameContext, PokemonGameState } from "~/context";
+import { PokemonGameContext, PokemonListContext } from "~/context";
+import { type PokemonGameState, type PokemonListState } from "~/context";
 
 export default component$(() => {
   useStyles$(styles);
@@ -21,6 +22,14 @@ export default component$(() => {
   });
 
   useContextProvider(PokemonGameContext, pokemonGame);
+
+  const pokemonList = useStore<PokemonListState>({
+    currentPage: 1,
+    isLoading: false,
+    pokemon: [],
+  });
+
+  useContextProvider(PokemonListContext, pokemonList);
 
   return (
     <>
