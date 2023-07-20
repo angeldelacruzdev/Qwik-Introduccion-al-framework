@@ -1,4 +1,10 @@
-import { component$, useComputed$ } from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  useComputed$,
+  useSignal,
+  useStore,
+} from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Link, routeLoader$, useLocation } from "@builder.io/qwik-city";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
@@ -19,11 +25,29 @@ export const usePokemonList = routeLoader$<BasicPokemonInfo[]>(
 export default component$(() => {
   const response = usePokemonList();
   const location = useLocation();
+  const modalVisible = useSignal(false);
+  const modalPokemonStore = useStore({
+    id: "",
+    name: "",
+  });
+
   const paramValue = useComputed$<number>(() => {
     const offsetString = new URLSearchParams(location.url.search);
     const number = Number(offsetString.get("offset") || 0);
 
     return number;
+  });
+
+  //Modal Functions
+  const showModal = $((id: string, name: string) => {
+    modalPokemonStore.id = id;
+    modalPokemonStore.name = name;
+
+    modalVisible.value = true;
+  });
+
+  const closeModal = $(() => {
+    modalVisible.value = false;
   });
 
   return (
@@ -57,15 +81,24 @@ export default component$(() => {
 
       <div class="grid grid-cols-6  gap-4 mt-5">
         {response.value.map(({ name, id }) => (
-          <div key={name} class="m-5 flex flex-col justify-center items-center">
+          <div
+            key={name}
+            onClick$={() => showModal(id, name)}
+            class="m-5 flex flex-col justify-center items-center"
+          >
             <PokemonImage id={+id} backIimage={false} isVisible />
             <span class="capitalize">{name}</span>
           </div>
         ))}
       </div>
-      <Modal>
-          <span>Hola mundo</span>
-          <PokemonImage id={2}   />
+      <Modal showModal={modalVisible.value} closeFn={closeModal} size="lg">
+        <div q:slot="title" class="font-bold">
+          {modalPokemonStore.name}
+        </div>
+        <div class="flex flex-col justify-center items-center" q:slot="content">
+          <PokemonImage id={+modalPokemonStore.id} isVisible={true} backIimage />
+          <span>Preguntale a CHATGPT</span>
+        </div>
       </Modal>
     </>
   );
