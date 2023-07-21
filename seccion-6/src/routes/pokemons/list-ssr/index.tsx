@@ -4,11 +4,13 @@ import {
   useComputed$,
   useSignal,
   useStore,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Link, routeLoader$, useLocation } from "@builder.io/qwik-city";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
 import { Modal } from "~/components/shared";
+import { getFunFactAboutPokemon } from "~/helpers/get-chat-gpt-response";
 import { getSmallPokemons } from "~/helpers/get-pokemons";
 import type { BasicPokemonInfo } from "~/interfaces";
 
@@ -48,6 +50,14 @@ export default component$(() => {
 
   const closeModal = $(() => {
     modalVisible.value = false;
+  });
+
+  useVisibleTask$(({ track }) => {
+    track(() => modalPokemonStore.name);
+
+    if (modalPokemonStore.name.length > 0) {
+      getFunFactAboutPokemon(modalPokemonStore.name);
+    }
   });
 
   return (
@@ -96,7 +106,11 @@ export default component$(() => {
           {modalPokemonStore.name}
         </div>
         <div class="flex flex-col justify-center items-center" q:slot="content">
-          <PokemonImage id={+modalPokemonStore.id} isVisible={true} backIimage />
+          <PokemonImage
+            id={+modalPokemonStore.id}
+            isVisible={true}
+            backIimage
+          />
           <span>Preguntale a CHATGPT</span>
         </div>
       </Modal>
