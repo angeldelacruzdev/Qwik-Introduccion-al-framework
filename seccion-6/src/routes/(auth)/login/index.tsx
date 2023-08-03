@@ -29,6 +29,13 @@ export default component$(() => {
     return "not-valid";
   });
 
+  const isFormValid = useComputed$(() => {
+    if (emailError.value === "not-valid" || passwordError.value === "not-valid")
+      return false;
+
+    return true;
+  });
+
   const onSubmit = $(() => {
     formState.formPosted = true;
     const { email, password } = formState;
@@ -62,7 +69,9 @@ export default component$(() => {
         <label for="password">Password</label>
       </div>
       <div class="relative">
-        <button type="submit">Ingresar</button>
+        <button disabled={!isFormValid.value} type="submit">
+          Ingresar
+        </button>
       </div>
 
       <code>{JSON.stringify(formState, undefined, 2)}</code>
